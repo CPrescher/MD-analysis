@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import os
 
 
 def is_separator(line_str):
@@ -14,15 +15,19 @@ def is_empty(line_str):
     return False
 
 
-def analyze_output(filenumber, show=True, save_figure=True, save_csv=True):
-    filename = 'OUTPUT-'+str(filenumber)
+def analyze_output(filename, show=True, save_figure=True, save_csv=True, output_dir=None):
+
+    if output_dir is None:
+        output_dir = os.path.dirname(filename)
+
     file = open(filename, 'r')
-
-
+    filename = os.path.basename(filename)
     # read in the file into an line array
     file_str = []
     for line in file:
         file_str.append(line)
+
+
 
     step = []
     time = []
@@ -60,6 +65,7 @@ def analyze_output(filenumber, show=True, save_figure=True, save_csv=True):
 
         line_index += 1
 
+    plt.figure()
     plt.subplot(2, 2, 1)
     plt.plot(time, pressure)
     plt.xlabel("time (ps)")
@@ -77,8 +83,9 @@ def analyze_output(filenumber, show=True, save_figure=True, save_csv=True):
     plt.xlabel("time (ps)")
     plt.ylabel("Volume (A^3)")
     plt.tight_layout()
+
     if save_figure:
-        plt.savefig(filename+'.png', dpi=300)
+        plt.savefig(os.path.join(output_dir,filename+'.png'), dpi=300)
 
     if show:
         plt.show()
@@ -93,10 +100,10 @@ def analyze_output(filenumber, show=True, save_figure=True, save_csv=True):
     df["energy"] = energy
 
     if save_csv:
-        df.to_csv(filename+'.csv')
+        df.to_csv(os.path.join(output_dir,filename+'.csv'))
 
     return df
 
 
 if __name__ == "__main__":
-    print analyze_output(2, show=False)
+    print analyze_output("OUTPUT-2", show=False)
