@@ -6,6 +6,7 @@ import os
 import pandas as pd
 import numpy as np
 
+from utility import convert_atoms_per_cubic_angstrom_to_density
 from output_data import analyze_output
 
 
@@ -14,6 +15,9 @@ folder_name = "../MD-4900at"
 output_folder = "../MD-4900at/results"
 minimum_time_for_average = 5
 number_of_atoms = 4900
+elemental_abundances = {"Mg": 2,
+                        "Si": 1,
+                        "O": 4}
 
 files = os.listdir(folder_name)
 
@@ -46,6 +50,7 @@ df["pressure (GPa)"] = np.array(pressure) / 10.0
 df["temperature (K)"] = temperature
 df["volume (A^3)"] = volume
 df["atomic_density"] = atomic_density
+df["density"] = convert_atoms_per_cubic_angstrom_to_density(elemental_abundances, np.array(atomic_density))
 df = df.set_index(["id"])
 df = df.sort_index()
 
