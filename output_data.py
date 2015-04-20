@@ -90,6 +90,8 @@ def analyze_output(filename, show=True, save_figure=True, save_csv=True, output_
     if show:
         plt.show()
 
+    plt.close()
+
     df = pd.DataFrame()
     df["step"] = step
     df["cpu_time (s)"] = cpu_time
