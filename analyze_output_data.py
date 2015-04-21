@@ -6,7 +6,7 @@ import os
 import pandas as pd
 import numpy as np
 
-from utility import convert_atoms_per_cubic_angstrom_to_density
+from utility import convert_atoms_per_cubic_angstrom_to_density, create_folder
 from output_data import analyze_output
 
 
@@ -20,7 +20,7 @@ elemental_abundances = {"Mg": 2,
                         "O": 4}
 
 files = os.listdir(folder_name)
-
+output_path = create_folder(output_folder, "conditions")
 # initialize the mean values
 id = []
 pressure = []
@@ -34,7 +34,7 @@ for filename in files:
         print filename
         df = analyze_output(os.path.join(folder_name, filename),
                             show=False,
-                            output_dir=output_folder)
+                            output_dir=output_path)
 
         df_subset = df[df["time (ps)"] > minimum_time_for_average]
 
@@ -54,4 +54,4 @@ df["density"] = convert_atoms_per_cubic_angstrom_to_density(elemental_abundances
 df = df.set_index(["id"])
 df = df.sort_index()
 
-df.to_csv(os.path.join(output_folder, 'results.csv'))
+df.to_csv(os.path.join(output_folder, 'conditions.csv'))
