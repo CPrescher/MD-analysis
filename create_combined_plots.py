@@ -13,10 +13,17 @@ sq_series_df = pd.read_csv(os.path.join(output_folder, "sq_series.csv"), index_c
 rdf_series_df = pd.read_csv(os.path.join(output_folder, "rdf_series.csv"), index_col=0)
 
 create_df_stack_plot(sq_series_df, os.path.join(output_folder, "sq_series_stack.png"),
-                     skip=2, x_limits=(0,12))
-create_df_stack_plot(rdf_series_df, os.path.join(output_folder, "rdf_series_stack.png"), skip=2)
+                     start_index=3, skip=2, x_limits=(0,12), text_pos=(0.9, 1.08),
+                     x_label="r $(\AA^{-1})$", y_label="S(q)")
+
+create_df_stack_plot(rdf_series_df, os.path.join(output_folder, "rdf_series_stack.png"),
+                     start_index=3, skip=2, x_label="r $(\AA)$", y_label="g(r)", text_pos=(0.9, 1.08))
 
 create_df_surface_plot(sq_series_df, os.path.join(output_folder, "sq_series_surface.png"), skip=2,
                        level_limits=(-0.2, 2))
+
+
 create_df_surface_plot(rdf_series_df, os.path.join(output_folder, "rdf_series_surface.png"), skip=2,
                        level_limits=(-0.2, 2.3))
+create_df_surface_plot(rdf_series_df, os.path.join(output_folder, "rdf_series_surface_detail.png"), skip=2,
+                       level_limits=(.75, 1.5), x_limits=(2,6))

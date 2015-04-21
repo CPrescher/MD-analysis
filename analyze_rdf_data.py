@@ -50,7 +50,7 @@ for id in range(file_numbers[0], file_numbers[1]+1):
     sq_weighted_df = calculate_combined_sq(sq_df, elemental_abundances)
     sq_weighted_df.to_csv(os.path.join(weighted_sq_path, filename + "_combined_sq.csv"))
 
-    fr_weighted_df = calculate_weighted_fr(sq_weighted_df)
+    fr_weighted_df = calculate_weighted_fr(sq_weighted_df, q_max=12)
     fr_weighted_df.to_csv(os.path.join(weighted_fr_path, filename + '_weighted_fr.csv'))
 
     rdf_weighted_df = calculate_weighted_rdf(fr_weighted_df, atomic_density=atomic_density)

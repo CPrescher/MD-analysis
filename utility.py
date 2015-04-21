@@ -95,24 +95,30 @@ def create_df_plot(df, filename, dpi=100, columns=None):
 def create_df_surface_plot(df, filename,
                            x_label= "", y_label="", z_label="",
                            level_limits=(0,2), level_bins=100,
-                           dpi=100, skip=0, x_region=None, figsize=(14, 5.8)):
+                           dpi=100, skip=0, x_limits=None, fig_size=(14, 5.8)):
     X = []
     Y = []
     Z = []
 
     x = df.index.values
+    if x_limits is not None:
+        data_ind = np.logical_and(x>=x_limits[0], x<=x_limits[1])
+    else:
+        data_ind = np.ones(x.shape, dtype=bool)
+    x = x[data_ind]
+
     for ind, col in enumerate(df.columns):
         if ind<skip:
             continue
         X.append(x)
         Y.append(np.ones(len(x)) * float(col))
-        Z.append(df[col])
+        Z.append(np.array(df[col])[data_ind])
 
     X = np.array(X)
     Y = np.array(Y)
     Z = np.array(Z)
 
-    plt.figure(figsize=figsize)
+    plt.figure(figsize=fig_size)
 
     levels = plt.MaxNLocator(nbins=100).tick_values(level_limits[0], level_limits[1])
     plt.contourf(X, Y, Z, levels=levels)
@@ -123,8 +129,10 @@ def create_df_surface_plot(df, filename,
     plt.savefig(filename, dpi=dpi)
     plt.close()
 
-def create_df_stack_plot(df, filename, sep=0.25, dpi=100, skip=0, x_limits=None):
-    plt.figure(figsize=(8, 20))
+def create_df_stack_plot(df, filename, sep=0.25, start_index=0, skip=0, x_limits=None,
+                         x_label="", y_label="",
+                         text_pos=(0.9, 0.8), dpi=100, fig_size=(8,10)):
+    plt.figure(figsize=fig_size)
     # plot individual lines
     x = np.array(df.index.values)
     if x_limits is not None:
@@ -134,12 +142,18 @@ def create_df_stack_plot(df, filename, sep=0.25, dpi=100, skip=0, x_limits=None)
 
     x = x[data_ind]
     for ind, col in enumerate(df.columns):
-        if ind<skip:
+        if ind<start_index:
             continue
-        plt.plot(x, np.array(df[col])[data_ind]+ind * 0.25, 'k-')
-        plt.text((np.max(x)-np.min(x))*0.9+np.min(x), ind*sep+0.8, "{:.2f}".format(float(col)))
 
+        if skip is not 0:
+            if not (ind+start_index) % skip == 0:
+                continue
+        plt.plot(x, np.array(df[col])[data_ind]+(ind-start_index) * sep, 'k-')
+        plt.text((np.max(x)-np.min(x))*text_pos[0]+np.min(x), (ind-start_index)*sep+text_pos[1], "{:.2f}".format(float(col)))
+
+    plt.ylim(-0.5, sep*(len(df.columns)-start_index)+2)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
     plt.tight_layout()
-    plt.ylim(-0.5, sep*len(df.columns)+2)
     plt.savefig(filename, dpi=dpi)
     plt.close()
