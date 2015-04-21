@@ -123,15 +123,21 @@ def create_df_surface_plot(df, filename,
     plt.savefig(filename, dpi=dpi)
     plt.close()
 
-def create_df_stack_plot(df, filename, sep=0.25, dpi=100, skip=0):
-    plt.figure()
+def create_df_stack_plot(df, filename, sep=0.25, dpi=100, skip=0, x_limits=None):
+    plt.figure(figsize=(8, 20))
     # plot individual lines
-    x = df.index.values
+    x = np.array(df.index.values)
+    if x_limits is not None:
+        data_ind = np.logical_and(x>=x_limits[0], x<=x_limits[1])
+    else:
+        data_ind = np.ones(x.shape, dtype=bool)
+
+    x = x[data_ind]
     for ind, col in enumerate(df.columns):
         if ind<skip:
             continue
-        plt.plot(x, df[col]+ind * 0.25, 'k-')
-        plt.text(np.max(x)*0.9, ind*sep+0.8, "{:.2f}".format(float(col)))
+        plt.plot(x, np.array(df[col])[data_ind]+ind * 0.25, 'k-')
+        plt.text((np.max(x)-np.min(x))*0.9+np.min(x), ind*sep+0.8, "{:.2f}".format(float(col)))
 
     plt.tight_layout()
     plt.ylim(-0.5, sep*len(df.columns)+2)
