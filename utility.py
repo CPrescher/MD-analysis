@@ -5,6 +5,7 @@ import os
 from copy import copy
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 from ScatteringFactors import ScatteringFactors
 
@@ -85,7 +86,23 @@ def create_df_plot(df, filename, dpi=100, columns=None):
     else:
         plt.plot(df.index.values, df[columns], label=columns)
 
-    plt.legend(loc="best")
+    plt.legend(loc=4)
     plt.tight_layout()
+    plt.savefig(filename, dpi=dpi)
+    plt.close()
+
+
+def create_df_stack_plot(df, filename, sep=0.25, dpi=100, skip=0):
+    plt.figure()
+    # plot individual lines
+    x = df.index.values
+    for ind, col in enumerate(df.columns):
+        if ind<skip:
+            continue
+        plt.plot(x, df[col]+ind * 0.25)
+        plt.text(np.max(x)*0.9, ind*sep+0.8, "{:.2f}".format(float(col)))
+
+    plt.tight_layout()
+    plt.ylim(-0.5, len(df.columns)+1)
     plt.savefig(filename, dpi=dpi)
     plt.close()
