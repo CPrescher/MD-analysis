@@ -95,7 +95,8 @@ def create_df_plot(df, filename, dpi=100, columns=None):
 def create_df_surface_plot(df, filename,
                            x_label= "", y_label="", z_label="",
                            level_limits=(0,2), level_bins=100,
-                           dpi=100, skip=0, x_limits=None, fig_size=(14, 5.8)):
+                           start_index=0, skip=0,
+                           x_limits=None,  dpi=100, fig_size=(14, 5.8)):
     X = []
     Y = []
     Z = []
@@ -108,8 +109,12 @@ def create_df_surface_plot(df, filename,
     x = x[data_ind]
 
     for ind, col in enumerate(df.columns):
-        if ind<skip:
+        if ind<start_index:
             continue
+        if skip is not 0:
+            if not (ind+start_index) % skip == 0:
+                continue
+
         X.append(x)
         Y.append(np.ones(len(x)) * float(col))
         Z.append(np.array(df[col])[data_ind])
