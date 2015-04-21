@@ -1,16 +1,14 @@
+# read in data
 
-#read in data
 import numpy as np
 import pandas as pd
-from copy import copy
 import matplotlib.pyplot as plt
 
-from ScatteringFactors import calculate_coherent_scattering_factor
+from ScatteringFactors.ScatteringFactors import calculate_coherent_scattering_factor
+from utility import normalize_elemental_abundances, clean_element_name
 
-dpi = 100
 
-
-def create_rdf_plot(filename):
+def read_rdf_data(filename):
     file = open(filename, "r")
 
     file_str = []
@@ -21,7 +19,7 @@ def create_rdf_plot(filename):
     data = {}
     data['r'] = []
     pair_columns = []
-    while(line_index < len(file_str)):
+    while (line_index < len(file_str)):
         line_str = file_str[line_index]
         if not line_str.startswith("  "):
             current_pair = "{} - {}".format(*line_str.split())
@@ -36,52 +34,35 @@ def create_rdf_plot(filename):
 
     df = pd.DataFrame(data)
     df = df[["r"] + pair_columns]
-
-    plt.figure()
-    # plot individual lines
-    _, data_columns = df.shape
-    for col in xrange(1, data_columns):
-        plt.plot(df.iloc[:, 0], df.iloc[:, col], label=df.columns[col])
-
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(filename + ".png", dpi=dpi)
-
+    df = df.set_index("r")
     return df
 
 
-def calculate_atomic_sq(df, number_density):
+def calculate_atomic_sq(df, atomic_density, max_q=20):
+    q = np.arange(0.01, max_q, 0.01)
+    r = df.index.values
 
-    q = np.linspace(0, 20, 2000)
-    r = df["r"]
-
-    s_q_df = pd.DataFrame()
-    s_q_df['q'] = q
-
-    _, data_columns = df.shape
+    sq_df = pd.DataFrame()
+    sq_df['q'] = q
 
     plt.figure()
-    for col in xrange(1, data_columns):
-        g_r = df.iloc[:, col]
+    for col in df.columns:
+        g_r = df[col]
         int_val = []
         delta_r = 0.5 * np.pi / np.max(r)
         modification = np.sin(delta_r) / delta_r
         for val in q:
             int_val.append(np.trapz(r * np.sin(val * r) * (g_r - 1) * modification, r))
-        s_q = 1 + 4 * np.pi * number_density / q * np.array(int_val)
-        s_q_df[df.columns[col]] = s_q
+        s_q = 1 + 4 * np.pi * atomic_density / q * np.array(int_val)
+        sq_df[col] = s_q
 
-        plt.plot(q, s_q, label=df.columns[col])
-    plt.legend(loc="best")
-    plt.tight_layout()
-    plt.savefig("s_q.png", dpi=dpi)
-    return s_q_df
+    sq_df = sq_df.set_index('q')
+    return sq_df
 
 
 def calculate_combined_sq(s_q_df, concentrations):
-
     concentrations = normalize_elemental_abundances(concentrations)
-    q = s_q_df["q"]
+    q = s_q_df.index.values
 
     # calculate denominator for weighting
     denom = np.zeros(q.shape)
@@ -90,16 +71,11 @@ def calculate_combined_sq(s_q_df, concentrations):
         denom += f * c
     denom = denom ** 2
 
-    s_q_weighted_df = pd.DataFrame()
-    s_q_weighted_df["q"] = q
+    sq_weighted_df = pd.DataFrame(index=q)
+    sq_weighted_df.index.name = "q"
     s_q_sum = np.zeros(q.shape)
 
-    plt.figure()
-
     for col in s_q_df.columns:
-        if col == "q":
-            continue
-
         # getting element names:
         elements_str = col.split(" - ")
         element1 = clean_element_name(elements_str[0])
@@ -116,55 +92,60 @@ def calculate_combined_sq(s_q_df, concentrations):
         weight = factor * (concentrations[element1] * f_element1 * concentrations[element2] * f_element2) / denom
         s_q = s_q_df[col] * weight
         s_q_sum += s_q
-        s_q_weighted_df[col] = s_q
+        sq_weighted_df[col] = s_q
 
-        plt.plot(q, s_q, label=col)
-
-    s_q_weighted_df["sum"] = s_q_sum
-    plt.plot(q, s_q_sum, label="sum")
-    plt.legend(loc=4)
-    plt.savefig("S_q_X.png", dpi=dpi)
-    return s_q_weighted_df
+    sq_weighted_df["sum"] = s_q_sum
+    return sq_weighted_df
 
 
-################################
-#### HELPER FUNCTIONS ##########
-################################
+def calculate_weighted_fr(sq_weighted_df, use_modification=False, q_max=None, r_limits=(0, 10)):
+    r = np.arange(r_limits[0], r_limits[1], 0.01)
 
+    q = sq_weighted_df.index.values
 
-def clean_element_name(element_str):
-    element = element_str[:2]
-    if element[1] == "_":
-        element = element[0]
+    if q_max is None:
+        q_max = np.max(q)
+
+    index = q <= q_max
+    q = q[index]
+
+    fr_weighted_df = pd.DataFrame(index=r)
+    fr_weighted_df.index.name = "r"
+
+    if use_modification:
+        modification = np.sin(q * np.pi / np.max(q)) / (q * np.pi / np.max(q))
     else:
-        element = element[0] + element[1].lower()
-    return element
+        modification = 1
+
+    q = np.array(q)
+
+    for col in sq_weighted_df.columns:
+        sq = np.array(sq_weighted_df[col])[index]
+        fr = 2.0 / np.pi * np.trapz(modification * q * (sq - 1) *
+                                    np.array(np.sin(np.mat(q).T * np.mat(r))).T, q)
+        fr_weighted_df[col] = fr
+
+    return fr_weighted_df
 
 
-def normalize_elemental_abundances(elemental_abundances):
-    """
-    normalizes elemental abundances to 1
-    :param elemental_abundances: dictionary with elements as key and abundances as relative numbers
-    :return: normalized elemental abundances dictionary dictionary
-    """
-    sum = 0.0
-    for key, val in elemental_abundances.iteritems():
-        sum += val
+def calculate_weighted_rdf(fr_weighted_df, atomic_density):
+    r = fr_weighted_df.index.values
+    rdf_weighted_df = pd.DataFrame(index=r)
+    rdf_weighted_df.index.name = "r"
+    for col in fr_weighted_df.columns:
+        rdf_weighted_df[col] = 1 + fr_weighted_df[col] / (4.0 * np.pi * r * atomic_density)
 
-    result = copy(elemental_abundances)
+    return rdf_weighted_df
 
-    for key in result:
-        result[key] /= sum
-
-    return result
 
 if __name__ == "__main__":
     import os
+
     files = os.listdir('.')
     # for file in files:
-        # if file.startswith("RDFDAT") and not file.endswith(".png"):
-    rdf_df = create_rdf_plot("RDFDAT-2")
-    s_q_df = calculate_atomic_sq(rdf_df,  0.07)
+    # if file.startswith("RDFDAT") and not file.endswith(".png"):
+    rdf_df = read_rdf_data("RDFDAT-2")
+    s_q_df = calculate_atomic_sq(rdf_df, 0.07)
     s_q_df.to_csv("RDFDAT-1-s_q.csv")
     s_q_df = pd.read_csv("RDFDAT-1-s_q.csv", index_col=0)
     concentrations = {
