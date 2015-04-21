@@ -77,8 +77,6 @@ rdf_weighted_series_df = rdf_weighted_series_df.set_index("r")
 sq_weighted_series_df.to_csv(os.path.join(output_folder, "sq_series.csv"))
 rdf_weighted_series_df.to_csv(os.path.join(output_folder, "rdf_series.csv"))
 
-create_df_stack_plot(sq_weighted_series_df, os.path.join(output_folder, "sq_series.png"), skip=2)
-create_df_stack_plot(rdf_weighted_series_df, os.path.join(output_folder, "rdf_series.png"), skip=2)
 
 
 

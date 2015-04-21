@@ -92,6 +92,37 @@ def create_df_plot(df, filename, dpi=100, columns=None):
     plt.close()
 
 
+def create_df_surface_plot(df, filename,
+                           x_label= "", y_label="", z_label="",
+                           level_limits=(0,2), level_bins=100,
+                           dpi=100, skip=0, x_region=None, figsize=(14, 5.8)):
+    X = []
+    Y = []
+    Z = []
+
+    x = df.index.values
+    for ind, col in enumerate(df.columns):
+        if ind<skip:
+            continue
+        X.append(x)
+        Y.append(np.ones(len(x)) * float(col))
+        Z.append(df[col])
+
+    X = np.array(X)
+    Y = np.array(Y)
+    Z = np.array(Z)
+
+    plt.figure(figsize=figsize)
+
+    levels = plt.MaxNLocator(nbins=100).tick_values(level_limits[0], level_limits[1])
+    plt.contourf(X, Y, Z, levels=levels)
+    plt.colorbar(label=z_label, ticks = np.linspace(level_limits[0], level_limits[1], 5))
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.tight_layout()
+    plt.savefig(filename, dpi=dpi)
+    plt.close()
+
 def create_df_stack_plot(df, filename, sep=0.25, dpi=100, skip=0):
     plt.figure()
     # plot individual lines
@@ -99,10 +130,10 @@ def create_df_stack_plot(df, filename, sep=0.25, dpi=100, skip=0):
     for ind, col in enumerate(df.columns):
         if ind<skip:
             continue
-        plt.plot(x, df[col]+ind * 0.25)
+        plt.plot(x, df[col]+ind * 0.25, 'k-')
         plt.text(np.max(x)*0.9, ind*sep+0.8, "{:.2f}".format(float(col)))
 
     plt.tight_layout()
-    plt.ylim(-0.5, len(df.columns)+1)
+    plt.ylim(-0.5, sep*len(df.columns)+2)
     plt.savefig(filename, dpi=dpi)
     plt.close()
