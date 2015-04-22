@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-from utility import create_df_plot
+from .utility import create_df_plot
 
 
 folder_name = "../MD-4900at"
@@ -39,13 +39,11 @@ def read_history_data(filename, start_line=3):
 
     return positions, side_length, number_of_atoms
 
-def calculate_rdf_all(position_list, side_length, number_of_atoms):
-
-    rdf_dataframes=[]
+def calculate_rdf_all(position_list, side_length, number_of_atoms, r_limits=(0.01, 10), r_step=0.01):
     # create a list of arguments for the Pool
     argument_list = []
     for ind, positions in enumerate(position_list):
-        argument_list.append((positions, number_of_atoms[ind], side_length[ind]))
+        argument_list.append((positions, number_of_atoms[ind], side_length[ind], r_limits, r_step))
 
     pool = Pool()
     rdf_dataframes = pool.starmap(calculate_rdf, argument_list)
