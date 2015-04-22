@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pandas
 
-module_path = os.path.dirname(unicode(__file__))
+module_path = os.path.dirname(__file__)
 data_path = os.path.join(module_path, "data")
 
 scattering_factor_param = pandas.read_csv(os.path.join(data_path,'param_atomic_scattering_factors.csv'),

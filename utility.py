@@ -76,7 +76,7 @@ def create_folder(parent_folder, folder_name):
     return folder_path
 
 
-def create_df_plot(df, filename, dpi=100, columns=None):
+def create_df_plot(df, filename, dpi=100, columns=None, legend_loc = 4):
     plt.figure()
     # plot individual lines
     _, data_columns = df.shape
@@ -86,7 +86,7 @@ def create_df_plot(df, filename, dpi=100, columns=None):
     else:
         plt.plot(df.index.values, df[columns], label=columns)
 
-    plt.legend(loc=4)
+    plt.legend(loc=legend_loc)
     plt.tight_layout()
     plt.savefig(filename, dpi=dpi)
     plt.close()
