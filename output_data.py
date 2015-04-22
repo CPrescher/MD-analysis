@@ -108,4 +108,4 @@ def analyze_output(filename, show=True, save_figure=True, save_csv=True, output_
 
 
 if __name__ == "__main__":
-    print analyze_output("OUTPUT-2", show=False)
+    print(analyze_output("OUTPUT-2", show=False))
