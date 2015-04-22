@@ -6,8 +6,8 @@ import os
 import pandas as pd
 import numpy as np
 
-from utility import convert_atoms_per_cubic_angstrom_to_density, create_folder
-from output_data import analyze_output
+from lib.utility import convert_atoms_per_cubic_angstrom_to_density, create_folder
+from lib.output_data import analyze_output
 
 
 # script parameter
@@ -31,7 +31,7 @@ real_density = []
 
 for filename in files:
     if "OUTPUT-" in filename:
-        print filename
+        print(filename)
         df = analyze_output(os.path.join(folder_name, filename),
                             show=False,
                             output_dir=output_path)

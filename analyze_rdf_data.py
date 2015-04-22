@@ -3,10 +3,10 @@ import os
 import pandas as pd
 import numpy as np
 
-from utility import create_folder, create_df_plot, create_df_stack_plot
-from rdf_data import read_rdf_data
-from rdf_data import calculate_atomic_sq, calculate_combined_sq
-from rdf_data import calculate_weighted_fr, calculate_weighted_rdf
+from lib.utility import create_folder, create_df_plot, create_df_stack_plot
+from lib.rdf_data import read_rdf_data
+from lib.rdf_data import calculate_atomic_sq, calculate_combined_sq
+from lib.rdf_data import calculate_weighted_fr, calculate_weighted_rdf
 
 
 
@@ -36,7 +36,7 @@ rdf_weighted_series_df = pd.DataFrame()
 
 for id in range(file_numbers[0], file_numbers[1]+1):
     filename = "RDFDAT-{}".format(id)
-    print filename
+    print(filename)
     atomic_density = np.array(conditions_df["atomic_density"])[id-1]
     pressure = np.array(conditions_df["pressure (GPa)"])[id-1]
 

@@ -7,7 +7,7 @@ from copy import copy
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ScatteringFactors import ScatteringFactors
+from lib.ScatteringFactors import ScatteringFactors
 
 
 def clean_element_name(element_str):
@@ -26,7 +26,7 @@ def normalize_elemental_abundances(elemental_abundances):
     :return: normalized elemental abundances dictionary dictionary
     """
     sum = 0.0
-    for key, val in elemental_abundances.iteritems():
+    for key, val in elemental_abundances.items():
         sum += val
 
     result = copy(elemental_abundances)
@@ -48,7 +48,7 @@ def convert_density_to_atoms_per_cubic_angstrom(elemental_abundances, density):
     # get_smallest abundance
     norm_elemental_abundances = normalize_elemental_abundances(elemental_abundances)
     mean_z = 0.0
-    for key, val in norm_elemental_abundances.iteritems():
+    for key, val in norm_elemental_abundances.items():
         mean_z += val * ScatteringFactors.atomic_weights['AW'][key]
     return density / mean_z * .602214129
 

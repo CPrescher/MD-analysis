@@ -4,7 +4,7 @@ __author__ = 'Clemens Prescher'
 import os
 import pandas as pd
 
-from utility import create_df_stack_plot, create_df_surface_plot
+from lib.utility import create_df_stack_plot, create_df_surface_plot
 
 
 output_folder = "../MD-4900at/results"

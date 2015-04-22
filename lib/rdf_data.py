@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from ScatteringFactors.ScatteringFactors import calculate_coherent_scattering_factor
-from utility import normalize_elemental_abundances, clean_element_name
+from .ScatteringFactors.ScatteringFactors import calculate_coherent_scattering_factor
+from .utility import normalize_elemental_abundances, clean_element_name
 
 
 def read_rdf_data(filename):
@@ -66,7 +66,7 @@ def calculate_combined_sq(s_q_df, concentrations):
 
     # calculate denominator for weighting
     denom = np.zeros(q.shape)
-    for element, c in concentrations.iteritems():
+    for element, c in concentrations.items():
         f = calculate_coherent_scattering_factor(element, q)
         denom += f * c
     denom = denom ** 2
