@@ -34,7 +34,7 @@ def read_history_data(filename, start_line=3):
         time_step, atoms = read_time_and_atom_num(file_str[ind])
         number_of_atoms.append(atoms)
         side_length.append(read_side_length(file_str[ind + 1]))
-        positions.append(read_atoms(file_str, ind + 4, atoms))
+        positions.append(read_atoms(file_str[ind+4:ind+4+2*atoms]))
         ind+=atoms*2+4
 
     return positions, side_length, number_of_atoms
@@ -107,9 +107,9 @@ def read_side_length(line_str):
     return side_length
 
 
-def read_atoms(file_str, start_ind, atom_number):
+def read_atoms(file_str):
     positions = {}
-    for line_index in range(start_ind, start_ind+atom_number * 2, 2):
+    for line_index in range(0, len(file_str), 2):
         atom_type = file_str[line_index].split()[0]
         if atom_type not in positions:
             positions[atom_type] = []
@@ -117,7 +117,6 @@ def read_atoms(file_str, start_ind, atom_number):
 
     for key in positions.keys():
         positions[key] = np.array(positions[key])
-
     return positions
 
 
