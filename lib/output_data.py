@@ -14,6 +14,18 @@ def is_empty(line_str):
         return True
     return False
 
+def convert_time_str(time_str):
+    unit = time_str[-1]
+    num = float(time_str[:-1])
+    unit_multiplier = {
+        'f': 1./1000,
+        'p': 1,
+        's': 1,
+        'm': 60
+    }
+    return num*unit_multiplier[unit]
+
+
 
 def analyze_output(filename, show=True, save_figure=True, save_csv=True, output_dir=None):
 
@@ -54,12 +66,12 @@ def analyze_output(filename, show=True, save_figure=True, save_csv=True, output_
                 line_index += 1
                 split_line = file_str[line_index].split()
                 if len(split_line):
-                    time.append(float(split_line[0]))
+                    time.append(convert_time_str(split_line[0]))
 
                 line_index += 1
                 split_line = file_str[line_index].rstrip().split()
                 if len(split_line):
-                    cpu_time.append(float(split_line[0]))
+                    cpu_time.append(convert_time_str(split_line[0]))
                     volume.append(float(split_line[1]))
                     pressure.append(float(split_line[9]))
 
