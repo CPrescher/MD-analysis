@@ -1,18 +1,10 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
-import os
+
 from multiprocessing import Pool
 
 import pandas as pd
-
 import numpy as np
-import matplotlib.pyplot as plt
-
-from .utility import create_df_plot
-
-
-folder_name = "../MD-4900at"
-output_folder = "../MD-4900at/results"
 
 
 def read_history_data(filename, start_line=3):
@@ -128,9 +120,3 @@ def distance(center_point, distant_points, dimensions):
 def read_position(line_str):
     line_str_splitted = line_str.split()
     return [float(line_str_splitted[0]), float(line_str_splitted[1]), float(line_str_splitted[2])]
-
-
-if __name__ == '__main__':
-    positions, side_length, number_of_atoms=read_history_data(os.path.join(folder_name, "HISTORY-11"))
-    calculate_rdf_all(positions, side_length, number_of_atoms)
-    print(len(positions))

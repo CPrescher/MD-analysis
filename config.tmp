@@ -1,0 +1,14 @@
+# Parameters for all the scripts, it is supposed to be renamed to config.py
+folder_name = "../Simulation"
+output_folder = "../Analysis"
+minimum_time_for_average = 5
+number_of_atoms = 4500
+elemental_abundances = {"Si": 1, "O": 2}
+
+stack_index = "temperature (K)" #for stack plots and how to name the columns
+
+# combined plot options:
+plot_start_index = 3
+plot_skip = 10
+plot_sq_text_pos=(0.9, 1.08)
+plot_gr_text_pos=(0.9, 1.08)
