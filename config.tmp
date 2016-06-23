@@ -1,4 +1,4 @@
-# Parameters for all the scripts, it is supposed to be renamed to config.py
+# Parameters for all the scripts
 folder_name = "../Simulation"
 output_folder = "../Analysis"
 minimum_time_for_average = 5
@@ -11,4 +11,9 @@ stack_index = "temperature (K)" #for stack plots and how to name the columns
 plot_start_index = 3
 plot_skip = 10
 plot_sq_text_pos=(0.9, 1.08)
+plot_sq_stack_sep = 0.2
 plot_gr_text_pos=(0.9, 1.08)
+plot_gr_stack_sep = 0.2
+plot_sq_surface_level_limits = 0, 2
+plot_gr_surface_level_limits = 0, 5
+plot_gr_surface_detail_level_limits = 0, 1.5

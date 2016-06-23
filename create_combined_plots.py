@@ -5,7 +5,9 @@ import os
 import pandas as pd
 
 from lib.utility import create_df_stack_plot, create_df_surface_plot, create_folder
-from config import output_folder, stack_index, plot_start_index, plot_skip, plot_gr_text_pos, plot_sq_text_pos
+from config import output_folder, stack_index, plot_start_index, plot_skip, plot_gr_text_pos, plot_sq_text_pos, \
+    plot_sq_stack_sep, plot_gr_stack_sep, plot_gr_surface_detail_level_limits, plot_gr_surface_level_limits, \
+    plot_sq_surface_level_limits
 
 
 output_path = create_folder(output_folder, "combined_plots")
@@ -21,6 +23,7 @@ rdf_series_df = pd.read_csv(os.path.join(output_folder, "rdf_series.csv"), index
 create_df_stack_plot(sq_series_df,
                      os.path.join(output_path, "sq_series_stack.png"),
                      start_index=plot_start_index,
+                     sep=plot_sq_stack_sep,
                      skip=plot_skip,
                      x_limits=(0,12),
                      text_pos=plot_sq_text_pos,
@@ -30,6 +33,7 @@ create_df_stack_plot(sq_series_df,
 create_df_stack_plot(rdf_series_df,
                      os.path.join(output_path, "rdf_series_stack.png"),
                      start_index=plot_start_index,
+                     sep=plot_gr_stack_sep,
                      skip=plot_skip,
                      x_label="r $(\AA)$",
                      y_label="g(r)",
@@ -42,7 +46,7 @@ create_df_stack_plot(rdf_series_df,
 create_df_surface_plot(sq_series_df,
                        os.path.join(output_path, "sq_series_surface.png"),
                        start_index=plot_start_index,
-                       level_limits=(-0.2, 2),
+                       level_limits=plot_sq_surface_level_limits,
                        x_label="r $(\AA^{-1})$",
                        y_label=stack_index,
                        skip=plot_skip
@@ -52,7 +56,7 @@ create_df_surface_plot(rdf_series_df,
                        os.path.join(output_path, "rdf_series_surface.png"),
                        start_index=plot_start_index,
                        skip=plot_skip,
-                       level_limits=(-0.2, 2.3),
+                       level_limits=plot_gr_surface_level_limits,
                        x_label="r $(\AA})$",
                        y_label=stack_index,
                        z_label="g(r)")
@@ -61,7 +65,7 @@ create_df_surface_plot(rdf_series_df,
                        os.path.join(output_path, "rdf_series_surface_detail.png"),
                        start_index=plot_start_index,
                        skip=plot_skip,
-                       level_limits=(.4, 1.5),
+                       level_limits=plot_gr_surface_detail_level_limits,
                        x_limits=(2,6),
                        x_label="r $(\AA^{-1})$",
                        y_label=stack_index,

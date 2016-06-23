@@ -146,6 +146,7 @@ def create_df_stack_plot(df, filename, sep=0.25, start_index=0, skip=0, x_limits
         data_ind = np.ones(x.shape, dtype=bool)
 
     x = x[data_ind]
+
     for ind, col in enumerate(df.columns):
         if ind<start_index:
             continue
@@ -153,10 +154,10 @@ def create_df_stack_plot(df, filename, sep=0.25, start_index=0, skip=0, x_limits
         if skip is not 0:
             if not (ind+start_index) % skip == 0:
                 continue
-        plt.plot(x, np.array(df[col])[data_ind]+(ind-start_index) * sep, 'k-')
-        plt.text((np.max(x)-np.min(x))*text_pos[0]+np.min(x), (ind-start_index)*sep+text_pos[1], "{:.2f}".format(float(col)))
+        plt.plot(x, np.array(df[col])[data_ind]+(ind-start_index)/skip * sep, 'k-')
+        plt.text((np.max(x)-np.min(x))*text_pos[0]+np.min(x), (ind-start_index)/skip*sep+text_pos[1], "{:.2f}".format(float(col)))
 
-    plt.ylim(-0.5, sep*(len(df.columns)-start_index)+2)
+    plt.ylim(-0.5, sep*(len(df.columns)-start_index)/skip+2)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.tight_layout()
