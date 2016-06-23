@@ -11,13 +11,12 @@ from lib.output_data import analyze_output
 
 
 # script parameter
-folder_name = "../MD-4900at"
-output_folder = "../MD-4900at/results"
+folder_name = "../Simulation"
+output_folder = "../Analysis"
 minimum_time_for_average = 5
-number_of_atoms = 4900
-elemental_abundances = {"Mg": 2,
-                        "Si": 1,
-                        "O": 4}
+number_of_atoms = 3500 
+elemental_abundances = {"Si": 1,
+                        "O": 2}
 
 files = os.listdir(folder_name)
 output_path = create_folder(output_folder, "conditions")

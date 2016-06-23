@@ -45,7 +45,7 @@ def calculate_rdf_all(position_list, side_length, number_of_atoms, r_limits=(0.0
     for ind, positions in enumerate(position_list):
         argument_list.append((positions, number_of_atoms[ind], side_length[ind], r_limits, r_step))
 
-    pool = Pool()
+    pool = Pool(processes=16)
     rdf_dataframes = pool.starmap(calculate_rdf, argument_list)
 
     # create average for each step
@@ -59,8 +59,7 @@ def calculate_rdf_all(position_list, side_length, number_of_atoms, r_limits=(0.0
     #divide by the number of dataframes
     rdf_df = rdf_df / float(len(rdf_dataframes))
 
-    rdf_df.to_csv("test.csv")
-    create_df_plot(rdf_df, "test.png", legend_loc="best")
+    return rdf_df
 
 
 def calculate_rdf(positions, number_of_atoms, side_length, r_limits=(0.01, 10), r_step=0.01):

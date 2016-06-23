@@ -11,15 +11,14 @@ from lib.rdf_data import calculate_weighted_fr, calculate_weighted_rdf
 
 
 # script parameter
-folder_name = "../MD-4900at"
-output_folder = "../MD-4900at/results"
+folder_name = "../Simulation"
+output_folder = "../Analysis"
 minimum_time_for_average = 5
-number_of_atoms = 4900
-elemental_abundances = {"Mg": 2,
-                        "Si": 1,
-                        "O": 4}
-file_numbers = (1, 46)
+number_of_atoms = 4500
+elemental_abundances = {"Si": 1,
+                        "O": 2}
 
+stack_index = "temperature (K)"
 
 # create output folders
 atomic_rdf_path = create_folder(output_folder, "atomic_rdf")
@@ -42,7 +41,7 @@ for filename in files:
         print(filename)
         id = int(filename[7:])
         atomic_density = np.array(conditions_df["atomic_density"])[id-1]
-        pressure = np.array(conditions_df["pressure (GPa)"])[id-1]
+        stack_value = np.array(conditions_df[stack_index])[id - 1]
 
 
         rdf_df = read_rdf_data(os.path.join(folder_name, filename))
@@ -69,10 +68,10 @@ for filename in files:
         create_df_plot(rdf_weighted_df, os.path.join(weighted_rdf_path, filename + "_weighted_rdf.png"), columns="sum")
 
         sq_weighted_series_df["q"] = np.array(sq_weighted_df.index.values)
-        sq_weighted_series_df[str(pressure)] = np.array(sq_weighted_df["sum"])
+        sq_weighted_series_df[str(stack_value)] = np.array(sq_weighted_df["sum"])
 
         rdf_weighted_series_df["r"] = rdf_weighted_df.index.values
-        rdf_weighted_series_df[str(pressure)] = np.array(rdf_weighted_df["sum"])
+        rdf_weighted_series_df[str(stack_value)] = np.array(rdf_weighted_df["sum"])
 
 
 sq_weighted_series_df = sq_weighted_series_df.set_index("q")

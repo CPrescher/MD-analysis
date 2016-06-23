@@ -64,7 +64,7 @@ def convert_atoms_per_cubic_angstrom_to_density(elemental_abundances, atomic_den
     # get_smallest abundance
     norm_elemental_abundances = normalize_elemental_abundances(elemental_abundances)
     mean_z = 0.0
-    for key, val in norm_elemental_abundances.iteritems():
+    for key, val in norm_elemental_abundances.items():
         mean_z += val * ScatteringFactors.atomic_weights['AW'][key]
     return atomic_density * mean_z / .602214129
 
